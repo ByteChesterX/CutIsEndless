@@ -18,8 +18,15 @@ NC='\033[0m'
 REPO_URL="https://github.com/ByteChesterX/CutIsEndless.git"
 INSTALL_DIR="/opt/CutIsEndless"
 APP_NAME="CutIsEndless"
-DESKTOP_FILE="$HOME/.local/share/applications/com.bytechester.cutisendless.desktop"
-ICON_DIR="$HOME/.local/share/icons/hicolor/256x256/apps"
+
+# sudo ile çalışırken gerçek kullanıcının HOME'unu bul
+if [[ -n "${SUDO_USER:-}" ]]; then
+    REAL_HOME=$(eval echo "~$SUDO_USER")
+else
+    REAL_HOME="$HOME"
+fi
+DESKTOP_FILE="$REAL_HOME/.local/share/applications/com.bytechester.cutisendless.desktop"
+ICON_DIR="$REAL_HOME/.local/share/icons/hicolor/256x256/apps"
 ICON_FILE="$ICON_DIR/com.bytechester.cutisendless.png"
 
 # ── Helpers ─────────────────────────────────────────────────
@@ -233,17 +240,27 @@ NC='\033[0m'
 
 echo -e "${RED}CutIsEndless kaldırılıyor...${NC}"
 
+# sudo ile çalışırken gerçek kullanıcının HOME'unu bul
+if [[ -n "${SUDO_USER:-}" ]]; then
+    REAL_HOME=$(eval echo "~$SUDO_USER")
+else
+    REAL_HOME="$HOME"
+fi
+
 # Remove desktop entry
-rm -f "$HOME/.local/share/applications/com.bytechester.cutisendless.desktop"
+rm -f "$REAL_HOME/.local/share/applications/com.bytechester.cutisendless.desktop"
 
 # Remove icon
-rm -f "$HOME/.local/share/icons/hicolor/256x256/apps/com.bytechester.cutisendless.png"
+rm -f "$REAL_HOME/.local/share/icons/hicolor/256x256/apps/com.bytechester.cutisendless.png"
 
 # Remove install directory
 rm -rf /opt/CutIsEndless
 
+# Remove history
+rm -f "$REAL_HOME/.mediacutter_history.json"
+
 # Update desktop database
-update-desktop-database "$HOME/.local/share/applications/" 2>/dev/null || true
+update-desktop-database "$REAL_HOME/.local/share/applications/" 2>/dev/null || true
 
 echo -e "${GREEN}CutIsEndless başarıyla kaldırıldı.${NC}"
 UNINSTALLEOF
